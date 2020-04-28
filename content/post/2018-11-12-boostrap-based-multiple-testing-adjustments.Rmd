@@ -1,0 +1,64 @@
+---
+title: 'Boostrap-Based Multiple Testing Adjustments: New R Package'
+author: F. Daniel Hidalgo
+date: '2018-11-12'
+slug: boostrap-based-multiple-testing-adjustments
+categories:
+  - r
+  - statistics
+tags:
+  - r
+  - statistics
+header:
+  caption: ''
+  image: ''
+bibliography: blog_references.bib  
+---
+ 
+A recent trend in quantitative political science is the increasing attention to the *multiple testing* problem in hypothesis testing. As we examine more and more dependent variables or subgroups in a given study, the potential for falsely rejecting at least one null hypothtesis due to chance increases. Despite this being a widely recognized problem in statistical theory, relatively few studies implement corrections that adjust p-values in order to guard against false positives. My hunch is that scholars fail to adjust for multiple tests because the most easily implemented tests (such as the Bonferroni adjustment or the Holm adjustment) can reduce statistical power dramatically and more forgiving resampling-based tests proposed in the literature are not easy to implement. 
+
+Because I've needed to implement these types of adjustments in my own work recently, I've written a [*R*](https://www.r-project.org/) package called **[`multitestr`](https://fdhidalgo.github.io/multitestr/index.html)** that implements one of the more popular resampling-based multiple testing adjustments proposed by @westfall1993s. If certain assumptions are met[^subset], this "free step down" bootstrap procedure controls the family wise error rate (FWER)[^fwer] like the more famous Bonerroni or similar procedures, but will be more powerful because it does not assume that individual p-values are independent of each other.   
+
+The package has been developed with linear regression in mind, since that is the workhorse of social science statistics. Currently, the main function `boot_stepdown` handles multiple outcomes and multiple subgroups. The function accepts weights and can adjust inference for "clustered" errors. One can choose to use the nonparametric "pairs" or parametric "wild" variants of the bootstrap. 
+
+It's still in "beta", so feedback is welcome. You can install from [Github](https://github.com/fdhidalgo/multitestr) with the following commands:
+```{r install, eval=FALSE}
+install.packages("devtools")
+devtools::install_github("fdhidalgo/multitestr")
+```
+
+Technical and implementation details, as well as more examples, can be found in the package [Vignette](https://fdhidalgo.github.io/multitestr/articles/multitestr.html). 
+
+Here is a quick demonstration of how it works. I replicate the famous [study](https://doi.org/10.1093/qje/qje027) by @casey2012reshaping that helped popularize the use of pre-analysis plans in economics.  The study estimates the effect of a "community-driven development" program on 12 composite outcomes in Sierra Leone. 
+
+The user must specify a list of `full_formulas` and `null_formulas`, where the `full_formulas` are the full regression models being tested and  `null_formulas` are models under the null hypothesis. In this particular case, the `full_formulas` are formulas with 12 different outcome variables (`z_score_1`...`z_score_12`), the treatment variable (`t`), pre-treatment covariates (`tothhs` and `road`), and strata fixed effects (`ward`).  The `null_formulas` are the corresponding models without a treatment variable, since the null hyptothesis is that the treatment had no effect. 
+
+```{r, cache=TRUE}
+library("multitestr")
+# Replicate Casey et al 2012, Table II Column 3
+set.seed(123)
+# Create a list of formulas with different dependent variables
+F <- lapply(sprintf("zscore_%d ~ 0 + t + tothhs + road + ward", 1:12),
+            as.formula)
+
+#Run the Westfall and Young boostrap step down procedure            
+pvals <- boot_stepdown(full_formulas = F,
+                       null_formulas = lapply(F, update, . ~ . - t),
+                       data = gobifo,
+                       coef_list = "t", #this parameter specifies the coefficient of interest
+                       nboots = 1000, 
+                       parallel = FALSE, 
+                       boot_type = "pairs",
+                       pb = FALSE)
+dplyr::mutate_if(pvals, is.numeric, round, 3)
+```
+
+In the function output, `bs_pvalues_unadjusted` are the boostrap p-values that do not adjust for multiple testing, while `bs_pvalues_adjusted` have been adjusted using the stepdown method. As is evident, adjusted p-values can be larger than their corresponding unadjusted p-values. 
+
+Further documentation can be found [here](https://fdhidalgo.github.io/multitestr/index.html) and please feel free to contact me regarding bugs or feature requests. 
+
+## References
+
+[^subset]: In most scenarios, the main additional assumption needed is *subset pivotality*. See package [Vignette](https://fdhidalgo.github.io/multitestr/articles/multitestr.html) for the definition and discussion.
+
+[^fwer]: The family wise error rate is the probability that one rejects at least one true null hypothesis (type 1 errors).

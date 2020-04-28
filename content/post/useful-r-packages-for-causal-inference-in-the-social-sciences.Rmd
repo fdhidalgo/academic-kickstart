@@ -1,0 +1,37 @@
+---
+title: Useful R Packages for Causal Inference in the Social Sciences
+author: F. Daniel Hidalgo
+date: '2019-09-27'
+slug: useful-r-packages-for-causal-inference-in-the-social-sciences
+categories:
+  - r
+  - statistics
+tags:
+  - r
+  - statistics
+subtitle: ''
+summary: ''
+authors: []
+lastmod: '2019-09-27T17:49:13-05:00'
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+  preview_only: no
+projects: []
+draft: true
+---
+
+```{r, echo=FALSE, message=FALSE}
+library(tidyverse)
+library(kableExtra)
+```
+
+This blogpost collects `R` packages that are useful for causal inference in the social sciences, particularly political science. This table is not exhaustive and merely serves as a useful references for students and applied researchers. 
+
+```{r, echo=FALSE}
+packages <- readxl::read_xlsx("./useful_r_packages.xlsx")
+kable(packages) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
+```
+

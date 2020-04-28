@@ -1,0 +1,78 @@
+---
+title: 'Boostrap-Based Multiple Testing Adjustments: New R Package'
+author: F. Daniel Hidalgo
+date: '2018-11-12'
+slug: boostrap-based-multiple-testing-adjustments
+categories:
+  - r
+  - statistics
+tags:
+  - r
+  - statistics
+header:
+  caption: ''
+  image: ''
+bibliography: blog_references.bib  
+---
+
+
+
+<p>A recent trend in quantitative political science is the increasing attention to the <em>multiple testing</em> problem in hypothesis testing. As we examine more and more dependent variables or subgroups in a given study, the potential for falsely rejecting at least one null hypothtesis due to chance increases. Despite this being a widely recognized problem in statistical theory, relatively few studies implement corrections that adjust p-values in order to guard against false positives. My hunch is that scholars fail to adjust for multiple tests because the most easily implemented tests (such as the Bonferroni adjustment or the Holm adjustment) can reduce statistical power dramatically and more forgiving resampling-based tests proposed in the literature are not easy to implement.</p>
+<p>Because I’ve needed to implement these types of adjustments in my own work recently, I’ve written a <a href="https://www.r-project.org/"><em>R</em></a> package called <strong><a href="https://fdhidalgo.github.io/multitestr/index.html"><code>multitestr</code></a></strong> that implements one of the more popular resampling-based multiple testing adjustments proposed by <span class="citation">Westfall and Young (1993)</span>. If certain assumptions are met<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>, this “free step down” bootstrap procedure controls the family wise error rate (FWER)<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> like the more famous Bonerroni or similar procedures, but will be more powerful because it does not assume that individual p-values are independent of each other.</p>
+<p>The package has been developed with linear regression in mind, since that is the workhorse of social science statistics. Currently, the main function <code>boot_stepdown</code> handles multiple outcomes and multiple subgroups. The function accepts weights and can adjust inference for “clustered” errors. One can choose to use the nonparametric “pairs” or parametric “wild” variants of the bootstrap.</p>
+<p>It’s still in “beta”, so feedback is welcome. You can install from <a href="https://github.com/fdhidalgo/multitestr">Github</a> with the following commands:</p>
+<pre class="r"><code>install.packages(&quot;devtools&quot;)
+devtools::install_github(&quot;fdhidalgo/multitestr&quot;)</code></pre>
+<p>Technical and implementation details, as well as more examples, can be found in the package <a href="https://fdhidalgo.github.io/multitestr/articles/multitestr.html">Vignette</a>.</p>
+<p>Here is a quick demonstration of how it works. I replicate the famous <a href="https://doi.org/10.1093/qje/qje027">study</a> by <span class="citation">Casey, Glennerster, and Miguel (2012)</span> that helped popularize the use of pre-analysis plans in economics. The study estimates the effect of a “community-driven development” program on 12 composite outcomes in Sierra Leone.</p>
+<p>The user must specify a list of <code>full_formulas</code> and <code>null_formulas</code>, where the <code>full_formulas</code> are the full regression models being tested and <code>null_formulas</code> are models under the null hypothesis. In this particular case, the <code>full_formulas</code> are formulas with 12 different outcome variables (<code>z_score_1</code>…<code>z_score_12</code>), the treatment variable (<code>t</code>), pre-treatment covariates (<code>tothhs</code> and <code>road</code>), and strata fixed effects (<code>ward</code>). The <code>null_formulas</code> are the corresponding models without a treatment variable, since the null hyptothesis is that the treatment had no effect.</p>
+<pre class="r"><code>library(&quot;multitestr&quot;)
+# Replicate Casey et al 2012, Table II Column 3
+set.seed(123)
+# Create a list of formulas with different dependent variables
+F &lt;- lapply(sprintf(&quot;zscore_%d ~ 0 + t + tothhs + road + ward&quot;, 1:12),
+            as.formula)
+
+#Run the Westfall and Young boostrap step down procedure            
+pvals &lt;- boot_stepdown(full_formulas = F,
+                       null_formulas = lapply(F, update, . ~ . - t),
+                       data = gobifo,
+                       coef_list = &quot;t&quot;, #this parameter specifies the coefficient of interest
+                       nboots = 1000, 
+                       parallel = FALSE, 
+                       boot_type = &quot;pairs&quot;,
+                       pb = FALSE)
+dplyr::mutate_if(pvals, is.numeric, round, 3)</code></pre>
+<pre><code>##       Hypothesis Variable bs_pvalues_unadjusted bs_pvalues_adjusted
+## 1   Hypothesis 1        t                 0.001               0.001
+## 2   Hypothesis 2        t                 0.001               0.001
+## 3   Hypothesis 3        t                 0.001               0.001
+## 4   Hypothesis 4        t                 0.738               0.981
+## 5   Hypothesis 5        t                 0.938               0.981
+## 6   Hypothesis 6        t                 0.134               0.677
+## 7   Hypothesis 7        t                 0.359               0.915
+## 8   Hypothesis 8        t                 0.452               0.915
+## 9   Hypothesis 9        t                 0.312               0.910
+## 10 Hypothesis 10        t                 0.043               0.348
+## 11 Hypothesis 11        t                 0.839               0.981
+## 12 Hypothesis 12        t                 0.357               0.915</code></pre>
+<p>In the function output, <code>bs_pvalues_unadjusted</code> are the boostrap p-values that do not adjust for multiple testing, while <code>bs_pvalues_adjusted</code> have been adjusted using the stepdown method. As is evident, adjusted p-values can be larger than their corresponding unadjusted p-values.</p>
+<p>Further documentation can be found <a href="https://fdhidalgo.github.io/multitestr/index.html">here</a> and please feel free to contact me regarding bugs or feature requests.</p>
+<div id="references" class="section level2 unnumbered">
+<h2 class="unnumbered">References</h2>
+<div id="refs" class="references hanging-indent">
+<div id="ref-casey2012reshaping">
+<p>Casey, Katherine, Rachel Glennerster, and Edward Miguel. 2012. “Reshaping Institutions: Evidence on Aid Impacts Using a Preanalysis Plan.” <em>The Quarterly Journal of Economics</em> 127 (4): 1755–1812.</p>
+</div>
+<div id="ref-westfall1993s">
+<p>Westfall, P, and S Young. 1993. “Resampling-Based Multiple Testing: Examples and Methods for P-Value Adjustment.” New York: Wiley.</p>
+</div>
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>In most scenarios, the main additional assumption needed is <em>subset pivotality</em>. See package <a href="https://fdhidalgo.github.io/multitestr/articles/multitestr.html">Vignette</a> for the definition and discussion.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>The family wise error rate is the probability that one rejects at least one true null hypothesis (type 1 errors).<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>
