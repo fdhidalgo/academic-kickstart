@@ -6,32 +6,48 @@ slug: useful-r-packages-for-causal-inference-in-the-social-sciences
 categories:
   - r
   - statistics
+  - quant2
 tags:
   - r
   - statistics
 subtitle: ''
 summary: ''
 authors: []
-lastmod: '2019-09-27T17:49:13-05:00'
+lastmod: '2020-04-30'
 featured: no
 image:
   caption: ''
   focal_point: ''
   preview_only: no
 projects: []
-draft: true
+draft: false
 ---
 
 ```{r, echo=FALSE, message=FALSE}
 library(tidyverse)
-library(kableExtra)
+library(gt)
 ```
 
-This blogpost collects `R` packages that are useful for causal inference in the social sciences, particularly political science. This table is not exhaustive and merely serves as a useful references for students and applied researchers. 
+The table below lists `R` packages that I have found useful for causal inference in the social sciences, particularly political science.  I regularly teach [Causal Inference](https://www.dropbox.com/s/80xrhc0shr2npr9/17_802_syll2020.pdf?dl=0)  as part of the methods sequence at MIT Political Science, so this post mainly serves a convenient place to send students when teaching that course. Nevertheless, it may be useful to other applied researchers. 
+
+Of course, the table below is by no means exhaustive, but merely reflects what I've used in the course of research and teaching. Please contact me if you have any additional suggestions or comments. 
 
 ```{r, echo=FALSE}
-packages <- readxl::read_xlsx("./useful_r_packages.xlsx")
-kable(packages) %>%
-  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
+packages <- readxl::read_xlsx("./useful_r_packages.xlsx") %>%
+  mutate(Package = glue::glue("[`{Package}`]({Url})"),
+          Url = glue::glue("<{Url}>")) %>%
+  select(-Url)
+
+gt(packages) %>%
+  fmt_markdown(everything()) %>%
+  cols_label(
+    Package = md("**Package**"),
+  #  Url = md("**URL**"),
+    Notes = md("**Notes**")
+  ) %>%
+  tab_options(
+    table.font.size = "smaller",
+    column_labels.font.size = "small"
+  )
 ```
 

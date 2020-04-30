@@ -6,62 +6,407 @@ slug: useful-r-packages-for-causal-inference-in-the-social-sciences
 categories:
   - r
   - statistics
+  - quant2
 tags:
   - r
   - statistics
 subtitle: ''
 summary: ''
 authors: []
-lastmod: '2019-09-27T17:49:13-05:00'
+lastmod: '2020-04-30'
 featured: no
 image:
   caption: ''
   focal_point: ''
   preview_only: no
 projects: []
-draft: true
+draft: false
 ---
 
-<script src="/rmarkdown-libs/kePrint/kePrint.js"></script>
 
 
-<p>This blogpost collects <code>R</code> packages that are useful for causal inference in the social sciences, particularly political science. This table is not exhaustive and merely serves as a useful references for students and applied researchers.</p>
-<table class="table table-striped table-hover table-condensed table-responsive" style="margin-left: auto; margin-right: auto;">
-<thead>
-<tr>
-<th style="text-align:left;">
-Package
-</th>
-<th style="text-align:left;">
-Url
-</th>
-<th style="text-align:left;">
-Notes
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-lfe
-</td>
-<td style="text-align:left;">
-<a href="https://github.com/sgaure/lfe" class="uri">https://github.com/sgaure/lfe</a>
-</td>
-<td style="text-align:left;">
-This package is a workhorse package for regression modeling. One of its chief strengths is that it allows for the fast estimation of models with high dimensional fixed effects. It also has functionality for instrumental variables regression and allows for heteroskedastic/cluster robust standard errors.
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-eventStudy
-</td>
-<td style="text-align:left;">
-<a href="https://github.com/setzler/eventStudy" class="uri">https://github.com/setzler/eventStudy</a>
-</td>
-<td style="text-align:left;">
-This package implements panel event studies.
-</td>
-</tr>
-</tbody>
-</table>
+<p>The table below lists <code>R</code> packages that I have found useful for causal inference in the social sciences, particularly political science. I regularly teach <a href="https://www.dropbox.com/s/80xrhc0shr2npr9/17_802_syll2020.pdf?dl=0">Causal Inference</a> as part of the methods sequence at MIT Political Science, so this post mainly serves a convenient place to send students when teaching that course. Nevertheless, it may be useful to other applied researchers.</p>
+<p>Of course, the table below is by no means exhaustive, but merely reflects what I’ve used in the course of research and teaching. Please contact me if you have any additional suggestions or comments.</p>
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#ujpltojuwy .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: smaller;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#ujpltojuwy .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#ujpltojuwy .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#ujpltojuwy .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 4px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#ujpltojuwy .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ujpltojuwy .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#ujpltojuwy .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: small;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#ujpltojuwy .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: small;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#ujpltojuwy .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#ujpltojuwy .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#ujpltojuwy .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#ujpltojuwy .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#ujpltojuwy .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#ujpltojuwy .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#ujpltojuwy .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#ujpltojuwy .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#ujpltojuwy .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#ujpltojuwy .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#ujpltojuwy .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ujpltojuwy .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#ujpltojuwy .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ujpltojuwy .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#ujpltojuwy .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ujpltojuwy .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#ujpltojuwy .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#ujpltojuwy .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#ujpltojuwy .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#ujpltojuwy .gt_left {
+  text-align: left;
+}
+
+#ujpltojuwy .gt_center {
+  text-align: center;
+}
+
+#ujpltojuwy .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#ujpltojuwy .gt_font_normal {
+  font-weight: normal;
+}
+
+#ujpltojuwy .gt_font_bold {
+  font-weight: bold;
+}
+
+#ujpltojuwy .gt_font_italic {
+  font-style: italic;
+}
+
+#ujpltojuwy .gt_super {
+  font-size: 65%;
+}
+
+#ujpltojuwy .gt_footnote_marks {
+  font-style: italic;
+  font-size: 65%;
+}
+</style>
+<div id="ujpltojuwy" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+  
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1"><strong>Package</strong></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1"><strong>Notes</strong></th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr>
+      <td class="gt_row gt_center"><div class='gt_from_md'><p><a href="https://cran.r-project.org/package=lfe"><code>lfe</code></a></p>
+</div></td>
+      <td class="gt_row gt_left"><div class='gt_from_md'><p>This package is a workhorse package for regression modeling. One of its chief strengths is that it allows for the  fast estimation of models with high dimensional fixed effects. It also has functionality for instrumental variables regression and allows for heteroskedastic/cluster robust standard errors.</p>
+</div></td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_center"><div class='gt_from_md'><p><a href="https://cran.r-project.org/package=estimatr"><code>estimatr</code></a></p>
+</div></td>
+      <td class="gt_row gt_left"><div class='gt_from_md'><p>This package has my goto drop-in replacement for <code>lm</code>: <code>robust_lm</code> which conveniently allows for robust and clustered standard errors. Also includes other estimators commonly used in designed-based inference.</p>
+</div></td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_center"><div class='gt_from_md'><p><a href="https://cran.r-project.org/package=sensemakr"><code>sensemakr</code></a></p>
+</div></td>
+      <td class="gt_row gt_left"><div class='gt_from_md'><p>R package implementing the sensitivity analysis methods for unmeasured confounding proposed in <a href="https://doi.org/10.1111/rssb.12348">Cinelli and Hazlett</a>. This is the first approach I suggest to students interested in implementing a sensitivity analysis.</p>
+</div></td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_center"><div class='gt_from_md'><p><a href="https://cran.r-project.org/package=rdrobust"><code>rdrobust</code></a></p>
+</div></td>
+      <td class="gt_row gt_left"><div class='gt_from_md'><p>Implements a suite of estimation methods, bandwidth selection algorthims, and graphical tools for regression discontinuity designs.</p>
+</div></td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_center"><div class='gt_from_md'><p><a href="https://cran.r-project.org/package=gsynth"><code>gsynth</code></a></p>
+</div></td>
+      <td class="gt_row gt_left"><div class='gt_from_md'><p>Provides recent panel-data estimators that go beyond standard fixed effects models, including interactive fixed effects models and matrix completion methods.</p>
+</div></td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_center"><div class='gt_from_md'><p><a href="https://cran.r-project.org/package=PanelMatch"><code>PanelMatch</code></a></p>
+</div></td>
+      <td class="gt_row gt_left"><div class='gt_from_md'><p>Implements generalized diffence-in-differences  estimators that avoid some of the recently identified <a href="https://www.nber.org/papers/w25018">problems</a> with two-way fixed effect models.</p>
+</div></td>
+    </tr>
+  </tbody>
+  
+  
+</table></div>
