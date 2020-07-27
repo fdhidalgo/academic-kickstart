@@ -12,6 +12,6 @@ links:
   - name: Replication Archive 
     url: 'https://doi.org/10.7910/DVN/N2I9LC'
   - name: Online Appendix
-    url: 'https://static.cambridge.org/resource/id/urn:cambridge.org:id:binary:20170606083709927-0151:S1047198700010974:S1047198700010974sup001.pdf'
+    url: 'https://static.cambridge.org/content/id/urn:cambridge.org:id:article:S1047198700010974/resource/name/S1047198700010974sup001.pdf'
 ---
 
